@@ -16,17 +16,20 @@ Attack caused the TimeLock.lockTime to overflow and was able to withdraw
 before the 1 week waiting period.
 */
 
+import "./lib/SafeMath.sol";
+
 contract TimeLock {
+    using SafeMath for uint;
     mapping(address => uint) public balances;
     mapping(address => uint) public lockTime;
 
     function deposit() external payable {
-        balances[msg.sender] += msg.value;
-        lockTime[msg.sender] = block.timestamp + 1 weeks;
+        balances[msg.sender] = balances[msg.sender].add(msg.value);
+        lockTime[msg.sender] = lockTime[msg.sender].add(1 weeks);
     }
 
     function increaseLockTime(uint _secondsToIncrease) public {
-        lockTime[msg.sender] += _secondsToIncrease;
+        lockTime[msg.sender] = lockTime[msg.sender].add(_secondsToIncrease);
     }
 
     function withdraw() public {
